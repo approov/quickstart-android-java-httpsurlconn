@@ -21,7 +21,7 @@ package io.approov.shapes;
 import android.app.Application;
 
 // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-//import io.approov.framework.httpsurlconn.ApproovService;
+//import io.approov.service.httpsurlconn.ApproovService;
 
 
 public class ShapesApp extends Application {
