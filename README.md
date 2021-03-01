@@ -104,6 +104,8 @@ We pass the `HttpsUrlConnection` to the `ApproovService.addApproov` method and t
 
 Note that this method may throw an `IOException` if it is unable to fetch an Approov token, typically due to no or poor Internet connectivity. Therefore the call should be in the same `try-catch` block as [`connect`](https://developer.android.com/reference/java/net/URLConnection.html#connect()) or reads of the body for a `GET`. If `addApproov` throws an exception then the user should be able to initiate a retry. During development an exception may be thrown due to a misconfiguration, see [Token Fetch Errors](https://approov.io/docs/latest/approov-usage-documentation/#token-fetch-errors).
 
+Run the app again to ensure that the `app-debug.apk` in the generated build outputs is up to date.
+
 ## REGISTER YOUR APP WITH APPROOV
 
 In order for Approov to recognize the app as being valid it needs to be registered with the service. Change directory to the top level of the `shapes-app` project and then register the app with Approov:
