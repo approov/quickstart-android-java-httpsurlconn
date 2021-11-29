@@ -51,7 +51,7 @@ The `approov-service-httpsurlconn` dependency needs to be added as follows to th
 Note that in this case the dependency has been added with the tag `main-SNAPSHOT`. However, for your projects we recommend you add a dependency to a specific version:
 
 ```
-implementation 'com.github.approov:approov-service-httpsurlconn:main-2.7.0'
+implementation 'com.github.approov:approov-service-httpsurlconn:2.7.0'
 ```
 
 Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
@@ -95,7 +95,7 @@ approov registration -add app/build/outputs/apk/debug/app-debug.apk
 ```
 Note, on Windows you need to substitute \ for / in the above command.
 
-> **IMPORTANT:** The registration takes up to 30 seconds to propagate across the Approov Cloud Infrastructure, therefore don't try to run the app again before this time as elapsed. During development of your app you can whitelist your device to not have to register the APK each time you modify it.
+> **IMPORTANT:** The registration takes up to 30 seconds to propagate across the Approov Cloud Infrastructure, therefore don't try to run the app again before this time as elapsed. During development of your app you ensure it [always passses](https://approov.io/docs/latest/approov-usage-documentation/#adding-a-device-security-policy) so you dp not have to register the APK each time you modify it.
 
 ## RUNNING THE SHAPES APP WITH APPROOV
 
@@ -107,7 +107,7 @@ Run the app again without making any changes to the app and press the `Get Shape
 
 This means that the app is getting a validly signed Approov token to present to the shapes endpoint.
 
-> **NOTE:** Running the app on an emulator will not provide valid Approov tokens. You will need to `whitelist` the device (see below).
+> **NOTE:** Running the app on an emulator will not provide valid Approov tokens. You will need to force the device to always pass (see below).
 
 ## WHAT IF I DON'T GET SHAPES
 
@@ -117,4 +117,4 @@ If you still don't get a valid shape then there are some things you can try. Rem
 * Look at the [`logcat`](https://developer.android.com/studio/command-line/logcat) output from the device. Information about any Approov token fetched or an error is output at the `INFO` level, e.g. `2020-02-10 13:55:55.774 10442-10705/io.approov.shapes I/ApproovInterceptor: Approov Token for shapes.approov.io: {"did":"+uPpGUPeq8bOaPuh+apuGg==","exp":1581342999,"ip":"1.2.3.4","sip":"R-H_vE"}`. You can easily [check](https://approov.io/docs/latest/approov-usage-documentation/#loggable-tokens) the validity and find out any reason for a failure.
 * Consider using an [Annotation Policy](https://approov.io/docs/latest/approov-usage-documentation/#annotation-policies) during initial development to directly see why the device is not being issued with a valid token.
 * Use `approov metrics` to see [Live Metrics](https://approov.io/docs/latest/approov-usage-documentation/#live-metrics) of the cause of failure.
-* You can use a debugger or emulator and get valid Approov tokens on a specific device by [whitelisting](https://approov.io/docs/latest/approov-usage-documentation/#adding-a-device-security-policy). As a shortcut, when you are first setting up, you can add a [device security policy](https://approov.io/docs/latest/approov-usage-documentation/#adding-a-device-security-policy) using the `latest` shortcut as discussed so that the `device ID` doesn't need to be extracted from the logs or an Approov token.
+* You can use a debugger or emulator and get valid Approov tokens on a specific device by ensuring it [always passes](https://approov.io/docs/latest/approov-usage-documentation/#adding-a-device-security-policy). As a shortcut, when you are first setting up, you can add a [device security policy](https://approov.io/docs/latest/approov-usage-documentation/#adding-a-device-security-policy) using the `latest` shortcut as discussed so that the `device ID` doesn't need to be extracted from the logs or an Approov token.
