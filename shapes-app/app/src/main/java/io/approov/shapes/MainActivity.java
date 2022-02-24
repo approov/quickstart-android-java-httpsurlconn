@@ -1,4 +1,3 @@
-// Main activity for Approov Shapes App Demo (using HttpsUrlConnection)
 //
 // MIT License
 //
@@ -45,7 +44,7 @@ public class MainActivity extends Activity {
     private View statusView = null;
     private ImageView statusImageView = null;
     private TextView statusTextView = null;
-    private Button connectivityCheckButton = null;
+    private Button helloCheckButton = null;
     private Button shapesCheckButton = null;
 
     /**
@@ -123,11 +122,11 @@ public class MainActivity extends Activity {
         statusView = findViewById(R.id.viewStatus);
         statusImageView = (ImageView) findViewById(R.id.imgStatus);
         statusTextView = findViewById(R.id.txtStatus);
-        connectivityCheckButton = findViewById(R.id.btnConnectionCheck);
+        helloCheckButton = findViewById(R.id.btnConnectionCheck);
         shapesCheckButton = findViewById(R.id.btnShapesCheck);
 
-       // handle connection check
-       connectivityCheckButton.setOnClickListener(new View.OnClickListener() {
+       // handle hello connection check
+       helloCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // hide status
@@ -156,8 +155,8 @@ public class MainActivity extends Activity {
                                 imgId = R.drawable.hello;
                         }
                         catch (IOException e) {
-                            Log.d(TAG, "Connectivity call failed: " + e.toString());
-                            msg = "Connection call failed: " + e.toString();
+                            Log.d(TAG, "Hello call failed: " + e.toString());
+                            msg = "Hello call failed: " + e.toString();
                         }
                         if (connection != null)
                             connection.disconnect();
@@ -203,6 +202,10 @@ public class MainActivity extends Activity {
                         URL url = new URL(getResources().getString(R.string.shapes_url));
                         connection = (HttpsURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
+                        connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
+
+                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECURE STRINGS ***
+                        //ShapesApp.approovService.addSubstitutionHeader("Api-Key", null);
 
                         // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
                         //ShapesApp.approovService.addApproov(connection);

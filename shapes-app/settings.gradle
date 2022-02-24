@@ -1,1 +1,2 @@
+include ':approov-sdk'
 include ':app'
