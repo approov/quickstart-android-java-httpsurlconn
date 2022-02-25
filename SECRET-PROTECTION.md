@@ -50,7 +50,7 @@ If the secret value is provided on the header `<secret-header>` then it is neces
 YourApp.approovService.addSubstitutionHeader("<secret-header>", null);
 ```
 
-With this in place, calls to `addApproov` should replace the `<secret-placeholder>` with the `<secret-value>` as required when the app passes attestation.  Since the mapping lookup is performed on the placeholder value you have the flexibiluty of providing different secrets on different API calls, even if they passed with the same header name.
+With this in place, calls to `addApproov` should replace the `<secret-placeholder>` with the `<secret-value>` as required when the app passes attestation.  Since the mapping lookup is performed on the placeholder value you have the flexibility of providing different secrets on different API calls, even if they passed with the same header name.
 
 Since earlier released versions of the app may have already leaked the `<secret-value>`, you may wish to refresh the secret at some later point when any older version of the app is no longer in use. You can of course do this update over-the-air using Approov without any need to modify the app.
 
@@ -103,7 +103,7 @@ Use the the following method in `ApproovService`:
 public static String fetchSecureString(String key, String newDef) throws ApproovException
 ```
 
-to lookup a secure string with the given `key`, returning `null` if it is not defined. Note that you should never cache this value in your code. Approov does the caching for you in a secure way. You may define a new value for the `key` by passing a new value in `newDef` rather than `null`. An empty `newDef` is used to delete the secure string.
+to lookup a secure string with the given `key`, returning `null` if it is not defined. Note that you should never cache this value in your code. Approov does the caching for you in a secure way. You may define a new value for the `key` by passing a new value in `newDef` rather than `null`. An empty string `newDef` is used to delete the secure string.
 
 Note that this method may make networking calls so should never be called from the main UI thread. The call may also fail with an `ApproovException`. If this is of type `ApproovNetworkException` then a retry should be performed as the issue is temporary and network related. If `ApproovRejectionException` is thrown then the app has not passed Approov attestation and some user feedback should be provided.
 
