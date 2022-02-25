@@ -65,7 +65,7 @@ The `<enter-your-config-string-here>` is a custom string that configures your Ap
 This initializes Approov when the app is first created. A `public static` member allows other parts of the app to access the singleton Approov instance. All calls to `ApproovService` and the SDK itself are thread safe.
 
 ## USING APPROOV SERVICE
-You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection:
+You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection, before the connection is made:
 
 ```Java
 YourApp.approovService.addApproov(connection);
@@ -76,7 +76,7 @@ For API domains that are configured to be protected with an Approov token, this 
 Approov errors will generate an `ApproovException`, which is a type of `IOException`. This may be further specialized into an `ApproovNetworkException`, indicating an issue with networking that should provide an option for a user initiated retry.
 
 ## CHECKING IT WORKS
-Initially you won't have set which API domains to protect, so the interceptor will not add anything. It will have called Approov though and made contact with the Approov cloud service. You will see logging from Approov saying `UNKNOWN_URL`.
+Initially you won't have set which API domains to protect, so the any `addApproov` call will not add anything. It will have called Approov though and made contact with the Approov cloud service. You will see logging from Approov saying `UNKNOWN_URL`.
 
 Your Approov onboarding email should contain a link allowing you to access [Live Metrics Graphs](https://approov.io/docs/latest/approov-usage-documentation/#metrics-graphs). After you've run your app with Approov integration you should be able to see the results in the live metrics within a minute or so. At this stage you could even release your app to get details of your app population and the attributes of the devices they are running upon.
 

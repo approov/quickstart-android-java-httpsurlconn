@@ -1,7 +1,7 @@
 # Secret Protection
 You should use this option if you wish to protect access to 3rd party or managed APIs where you are not able to add an Approov token check to the backend. This allows client secrets, or API keys, used for access to be protected with Approov. Rather than build secrets into an app where they might be reverse engineered, they are only provided at runtime by Approov for apps that are pass Approov attestation. This substantially improves your protection and prevents these secrets being abused by attackers. Where you are able to modify the backend we recommend you use Token Protection for further enchanced flexibility and security.
 
-This quickstart provides straigtforward implementation if the secret is currently supplied in a request header to the API. The quickstart interceptor is able to automatically rewrite headers as the requests are being made, to automatically substitute in the secret, but only if the app has passed the Approov attestation checks. If the app fails its checks then you can add a custom [rejection](#handling-rejections) handler.
+This quickstart provides straightforward implementation if the secret is currently supplied in a request header to the API. The `addApproov` method applied to a connection is able to automatically substitute in the secret for headers, but only if the app has passed the Approov attestation checks. If the app fails its checks then you can add a custom [rejection](#handling-rejections) handler.
 
 These additional steps require access to the [Approov CLI](https://approov.io/docs/latest/approov-cli-tool-reference/), please follow the [Installation](https://approov.io/docs/latest/approov-installation/) instructions.
 
@@ -32,7 +32,7 @@ It is assumed that you already have some client secrets and/or API keys in your 
 approov secstrings -setEnabled
 ```
 
-The quickstart integration works by allowing you to replace the secret in your app with a placeholder value instead, and then the placeholder value is mapped to the actual secret value on the fly by the interceptor (if the app passes Approov attestation). The shipped app code will only contain the placeholder values.
+The quickstart integration works by allowing you to replace the secret in your app with a placeholder value instead, and then the placeholder value is mapped to the actual secret value by `addApproov`, if the app passes Approov attestation. The shipped app code will only contain the placeholder values.
 
 If your app currently uses `<secret-value>` then replace it in your app with the value `<secret-placeholder>`. Choose a suitable placeholder name to reflect the type of the secret. The placeholder value will be added to requests in the normal way, but you should be using the Approov enabled networking client to perfom the substituion.
 
@@ -42,13 +42,15 @@ You must inform Approov that it should substitute `<secret-placeholder>` for `<s
 approov secstrings -addKey <secret-placeholder> -predefinedValue <secret-value>
 ```
 
+You can add up to 16 different secret values to be substituted in this way.
+
 If the secret value is provided on the header `<secret-header>` then it is necessary to notify the `ApproovService` that the header is subject to substitution. You do this by making the call once, after initialization:
 
 ```Java
 YourApp.approovService.addSubstitutionHeader("<secret-header>", null);
 ```
 
-With this in place the Approov interceptor should replace the `<secret-placeholder>` with the `<secret-value>` as required when the app passes attestation. You can add up to 16 different secret values to be substituted in this way. Since the mapping lookup is performed on the placeholder value you have the flexibiluty of providing different secrets on different API calls, even if they passed with the same header name.
+With this in place, calls to `addApproov` should replace the `<secret-placeholder>` with the `<secret-value>` as required when the app passes attestation.  Since the mapping lookup is performed on the placeholder value you have the flexibiluty of providing different secrets on different API calls, even if they passed with the same header name.
 
 Since earlier released versions of the app may have already leaked the `<secret-value>`, you may wish to refresh the secret at some later point when any older version of the app is no longer in use. You can of course do this update over-the-air using Approov without any need to modify the app.
 
@@ -105,7 +107,7 @@ to lookup a secure string with the given `key`, returning `null` if it is not de
 
 Note that this method may make networking calls so should never be called from the main UI thread. The call may also fail with an `ApproovException`. If this is of type `ApproovNetworkException` then a retry should be performed as the issue is temporary and network related. If `ApproovRejectionException` is thrown then the app has not passed Approov attestation and some user feedback should be provided.
 
-This method is also useful for providing runtime secrets protection when the values are not passed on headers. Secure strings set using this method may also be looked up using subsequent networking interceptor header substitutions. 
+This method is also useful for providing runtime secrets protection when the values are not passed on headers. Secure strings set using this method may be substituted using subsequent `addApproov` calls. 
 
 ### Prefetching
 If you wish to reduce the latency associated with substituting the first secret, then make this call immediately after creating `ApproovService`:

@@ -4,7 +4,7 @@ You should use this option if you wish to protect access to your APIs using an A
 These steps require access to the [Approov CLI](https://approov.io/docs/latest/approov-cli-tool-reference/), please follow the [Installation](https://approov.io/docs/latest/approov-installation/) instructions.
 
 ## ADDING API DOMAINS
-In order for Approov tokens to be added by the interceptor for particular API domains it is necessary to inform Approov about them. Execute the following command:
+In order for Approov tokens to be added for particular API domains it is necessary to inform Approov about them. Execute the following command:
 
 ```
 approov api -add <your-domain>
