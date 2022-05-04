@@ -38,6 +38,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+// *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
+//import io.approov.service.httpsurlconn.ApproovService;
+
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private Activity activity;
@@ -204,11 +207,11 @@ public class MainActivity extends Activity {
                         connection.setRequestMethod("GET");
                         connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
 
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECURE STRINGS ***
-                        //ShapesApp.approovService.addSubstitutionHeader("Api-Key", null);
+                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRET PROTECTION ***
+                        //ApproovService.addSubstitutionHeader("Api-Key", null);
 
                         // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-                        //ShapesApp.approovService.addApproov(connection);
+                        //ApproovService.addApproov(connection);
 
                         connection.connect();
                         msg = "Http status code " + connection.getResponseCode();

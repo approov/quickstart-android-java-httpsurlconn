@@ -24,7 +24,7 @@ Secondly, add the dependency in your app's `build.gradle`:
 
 ```
 dependencies {
-	 implementation 'com.github.approov:approov-service-httpsurlconn:3.0.2'
+	 implementation 'com.github.approov:approov-service-httpsurlconn:3.0.3'
 }
 ```
 Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
@@ -41,7 +41,7 @@ The following app permissions need to be available in the manifest to use Approo
 
 Note that the minimum SDK version you can use with the Approov package is 21 (Android 5.0). 
 
-Please [read this](https://approov.io/docs/latest/approov-usage-documentation/#targetting-android-11-and-above) section of the reference documentation if targetting Android 11 (API level 30) or above.
+Please [read this](https://approov.io/docs/latest/approov-usage-documentation/#targeting-android-11-and-above) section of the reference documentation if targeting Android 11 (API level 30) or above.
 
 ## INITIALIZING APPROOV SERVICE
 In order to use the `ApproovService` you must initialize it when your app is created, usually in the `onCreate` method:
@@ -50,19 +50,15 @@ In order to use the `ApproovService` you must initialize it when your app is cre
 import io.approov.service.httpsurlconn.ApproovService;
 
 public class YourApp extends Application {
-    public static ApproovService approovService;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        approovService = new ApproovService(getApplicationContext(), "<enter-your-config-string-here>");
+        ApproovService.initialize(getApplicationContext(), "<enter-your-config-string-here>");
     }
 }
 ```
 
 The `<enter-your-config-string-here>` is a custom string that configures your Approov account access. This will have been provided in your Approov onboarding email.
-
-This initializes Approov when the app is first created. A `public static` member allows other parts of the app to access the singleton Approov instance. All calls to `ApproovService` and the SDK itself are thread safe.
 
 It is possible to pass an empty string to indicate that no initialization is required. Only do this if you are also using a different Approov quickstart in your app (which will use the same underlying Approov SDK) and this will have been initialized first.
 
@@ -70,7 +66,7 @@ It is possible to pass an empty string to indicate that no initialization is req
 You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection, before the connection is made:
 
 ```Java
-YourApp.approovService.addApproov(connection);
+ApproovService.addApproov(connection);
 ```
 
 For API domains that are configured to be protected with an Approov token, this adds the `Approov-Token` header and pins the connection. This may also substitute header values when using secret protection.
@@ -90,3 +86,5 @@ To actually protect your APIs there are some further steps. Approov provides two
 * [SECRET PROTECTION](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/SECRET-PROTECTION.md): If you do not control the backend API(s) being protected, and are therefore unable to modify it to check Approov tokens, you can use this approach instead. It allows app secrets, and API keys, to be protected so that they no longer need to be included in the built code and are only made available to passing apps at runtime.
 
 Note that it is possible to use both approaches side-by-side in the same app, in case your app uses a mixture of 1st and 3rd party APIs.
+
+See [REFERENCE](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/REFERENCE.md) for a complete list of all of the `ApproovService` methods.
