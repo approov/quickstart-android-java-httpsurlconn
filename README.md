@@ -69,7 +69,7 @@ You can then make Approov enabled `HttpsUrlConnection` API calls using the follo
 ApproovService.addApproov(connection);
 ```
 
-For API domains that are configured to be protected with an Approov token, this adds the `Approov-Token` header and pins the connection. This may also substitute header values when using secret protection.
+For API domains that are configured to be protected with an Approov token, this adds the `Approov-Token` header and pins the connection. This may also substitute header values when using secrets protection.
 
 Approov errors will generate an `ApproovException`, which is a type of `IOException`. This may be further specialized into an `ApproovNetworkException`, indicating an issue with networking that should provide an option for a user initiated retry.
 
@@ -79,11 +79,11 @@ Initially you won't have set which API domains to protect, so the any `addApproo
 Your Approov onboarding email should contain a link allowing you to access [Live Metrics Graphs](https://approov.io/docs/latest/approov-usage-documentation/#metrics-graphs). After you've run your app with Approov integration you should be able to see the results in the live metrics within a minute or so. At this stage you could even release your app to get details of your app population and the attributes of the devices they are running upon.
 
 ## NEXT STEPS
-To actually protect your APIs there are some further steps. Approov provides two different options for protecting APIs:
+To actually protect your APIs there are some further steps. Approov provides two different options for protection:
 
-* [TOKEN PROTECTION](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/TOKEN-PROTECTION.md): You should use this if you control the backend API(s) being protected and are able to modify them to ensure that a valid Approov token is being passed by the app. An [Approov Token](https://approov.io/docs/latest/approov-usage-documentation/#approov-tokens) is short lived crytographically signed JWT proving the authenticity of the call.
+* [API PROTECTION](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/API-PROTECTION.md): You should use this if you control the backend API(s) being protected and are able to modify them to ensure that a valid Approov token is being passed by the app. An [Approov Token](https://approov.io/docs/latest/approov-usage-documentation/#approov-tokens) is short lived crytographically signed JWT proving the authenticity of the call.
 
-* [SECRET PROTECTION](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/SECRET-PROTECTION.md): If you do not control the backend API(s) being protected, and are therefore unable to modify it to check Approov tokens, you can use this approach instead. It allows app secrets, and API keys, to be protected so that they no longer need to be included in the built code and are only made available to passing apps at runtime.
+* [SECRETS PROTECTION](https://github.com/approov/quickstart-android-java-httpsurlconn/blob/master/SECRETS-PROTECTION.md): If you do not control the backend API(s) being protected, and are therefore unable to modify it to check Approov tokens, you can use this approach instead. It allows app secrets, and API keys, to be protected so that they no longer need to be included in the built code and are only made available to passing apps at runtime.
 
 Note that it is possible to use both approaches side-by-side in the same app, in case your app uses a mixture of 1st and 3rd party APIs.
 

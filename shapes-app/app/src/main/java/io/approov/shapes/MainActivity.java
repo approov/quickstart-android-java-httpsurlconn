@@ -207,7 +207,7 @@ public class MainActivity extends Activity {
                         connection.setRequestMethod("GET");
                         connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
 
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRET PROTECTION ***
+                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRETS PROTECTION ***
                         //ApproovService.addSubstitutionHeader("Api-Key", null);
 
                         // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
