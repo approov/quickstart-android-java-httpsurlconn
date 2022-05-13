@@ -12,13 +12,15 @@ If a method throws an `ApproovNetworkException` (a subclass of `ApproovException
 If a method throws an `ApproovRejectionException` (a subclass of `ApproovException`) the this indicates the problem was that the app failed attestation. An additional method `getARC()` provides the [Attestation Response Code](https://approov.io/docs/latest/approov-usage-documentation/#attestation-response-code), which could be provided to the user for communication with your app support to determine the reason for failure, without this being revealed to the end user. The method `getRejectionReasons()` provides the [Rejection Reasons](https://approov.io/docs/latest/approov-usage-documentation/#rejection-reasons) if the feature is enabled, providing a comma separated list of reasons why the app attestation was rejected.
 
 ## Initialize
-Initializes the Approov SDK and thus enables the Approov features. The `config` will have been provided in the initial onboarding or email or can be [obtained](https://approov.io/docs/latest/approov-usage-documentation/#getting-the-initial-sdk-configuration) using the approov CLI. This will generate an error if a second attempt is made at initialization with a different `config`.
+Initializes the Approov SDK and thus enables the Approov features. The `config` will have been provided in the initial onboarding or email or can be [obtained](https://approov.io/docs/latest/approov-usage-documentation/#getting-the-initial-sdk-configuration) using the Approov CLI. This will generate an error if a second attempt is made at initialization with a different `config`.
 
 ```Java
 void initialize(Context context, String config)
 ```
 
 The [application context](https://developer.android.com/reference/android/content/Context#getApplicationContext()) must be provided using the `context` parameter.
+
+It is possible to pass an empty `config` string to indicate that no initialization is required. Only do this if you are also using a different Approov quickstart in your app (which will use the same underlying Approov SDK) and this will have been initialized first.
 
 ## AddApproov
 Adds Approov to the given `connection`. The Approov token is added in a header and this also overrides the HostnameVerifier with something that pins the connections. If a binding header has been specified then its hash will be set if it is present. This function may also substitute header values to hold secure string secrets. If it is not currently possible to fetch an Approov token due then `ApproovException` is thrown.
@@ -65,7 +67,6 @@ void removeSubstitutionHeader(String header)
 ```
 
 ## SubstituteQueryParam
-
 Substitutes the given `queryParameter` in the `url`. If no substitution is made then the original URL is returned, otherwise a new one is constructed with the revised query parameter value. Since this modifies the URL itself this must be done before opening the `HttpsURLConnection`. If it is not possible to fetch secure strings then an `ApproovException` is thrown.
 
 ```Java
