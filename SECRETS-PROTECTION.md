@@ -67,7 +67,7 @@ If the secret value is provided as a parameter in a URL query string then it is 
 url = ApproovService.substituteQueryParam(url, "your-param");
 ```
 
-If no substitution is made then the return value is the same as the input [URL](https://developer.android.com/reference/java/net/URL), otherwise a new `URL` is created with the substituted parameter value. The call should transform any instance of a URL such as `https://mydomain.com/endpoint?your-param=your-placeholder` into `https://mydomain.com/endpoint?your-param=your-secret`, if the app passes attestation and there is a secure string with the name `your-placeholder`. Note that this should only ever be applied to a `URL` with a host domain that has been added to Approov, so that either pinning or managed trust roots protection is being applied.
+If no substitution is made then the return value is the same as the input [URL](https://developer.android.com/reference/java/net/URL), otherwise a new `URL` is created with the substituted parameter value. The call should transform any instance of a URL such as `https://your.domain/endpoint?your-param=your-placeholder` into `https://your.domain/endpoint?your-param=your-secret`. Note that this should only ever be applied to a `URL` with a host domain that has been added to Approov, so that either pinning or managed trust roots protection is being applied.
 
 ## REGISTERING APPS
 In order for Approov to recognize the app as being valid it needs to be registered with the service. Change the directory to the top level of your app project and then register the app with Approov:
