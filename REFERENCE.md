@@ -23,7 +23,7 @@ The [application context](https://developer.android.com/reference/android/conten
 It is possible to pass an empty `config` string to indicate that no initialization is required. Only do this if you are also using a different Approov quickstart in your app (which will use the same underlying Approov SDK) and this will have been initialized first.
 
 ## AddApproov
-Adds Approov to the given `connection`. The Approov token is added in a header and this also overrides the HostnameVerifier with something that pins the connections. If a binding header has been specified then its hash will be set if it is present. This function may also substitute header values to hold secure string secrets. If it is not currently possible to fetch an Approov token due then `ApproovException` is thrown.
+Adds Approov to the given `connection`. The Approov token is added in a header and this also overrides the HostnameVerifier with something that pins the connections. If a binding header has been specified then its hash will be set if it is present. This function may also substitute header values to hold secure string secrets. If it is not possible to fetch an Approov token due to networking issues, or header substitution fails due to attestation rejection, then `ApproovException` is thrown.
     
 ```Java
 void addApproov(HttpsURLConnection connection) throws ApproovException
