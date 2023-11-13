@@ -61,11 +61,13 @@ public class YourApp extends Application {
 The `<enter-your-config-string-here>` is a custom string that configures your Approov account access. This will have been provided in your Approov onboarding email.
 
 ## USING APPROOV SERVICE
-You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection, before the connection is made:
+You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection, just before the connection is made:
 
 ```Java
 ApproovService.addApproov(connection);
 ```
+
+> **NOTE:** It is important that this call is made just prior to the connection being made and thus within any retry loop, to ensure that an updated Approov token is always made available on the connection request.
 
 For API domains that are configured to be protected with an Approov token, this adds the `Approov-Token` header and pins the connection. This may also substitute header values when using secrets protection.
 
