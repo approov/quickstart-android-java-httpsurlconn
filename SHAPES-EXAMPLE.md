@@ -120,7 +120,7 @@ If you still don't get a valid shape then there are some things you can try. Rem
 
 * Ensure that the version of the app you are running is signed with the correct certificate.
 * Look at the [`logcat`](https://developer.android.com/studio/command-line/logcat) output from the device. Information about any Approov token fetched or an error is output at the `DEBUG` level. You can easily [check](https://approov.io/docs/latest/approov-usage-documentation/#loggable-tokens) the validity and find out any reason for a failure.
-* Use `approov metrics` to see [Live Metrics](https://approov.io/docs/latest/approov-usage-documentation/#live-metrics) of the cause of failure.
+* Use `approov metrics` to see [Live Metrics](https://approov.io/docs/latest/approov-usage-documentation/#metrics-graphs) of the cause of failure.
 * You can use a debugger or emulator and get valid Approov tokens if you [mark the signing certificate as being for development](https://approov.io/docs/latest/approov-usage-documentation/#development-app-signing-certificates).
 
 ## SHAPES APP WITH SECRETS PROTECTION
