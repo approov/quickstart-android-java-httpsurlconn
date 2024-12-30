@@ -38,7 +38,7 @@ The subsequent steps of this guide show you how to provide better protection, ei
 
 ## ADD THE APPROOV DEPENDENCY
 
-The Approov integration is available via [`jitpack`](https://jitpack.io). This allows inclusion into the project by simply specifying a dependency in the `gradle` files for the app. The `Maven` repository is already present in the gradle.build file so the only import you need to make is the actual service layer itself.
+The Approov integration is available via [`maven`](https://mvnrepository.com/repos/central). This allows inclusion into the project by simply specifying a dependency in the `gradle` files for the app. The `Maven` repository is already present in the gradle.build file so the only import you need to make is the actual service layer itself.
 
 The `approov-service-httpsurlconn` dependency needs to be added as follows to the `app/build.gradle` at the app level:
 
