@@ -45,7 +45,7 @@ The `approov-service-httpsurlconn` dependency needs to be added as follows to th
 ![App Build Gradle](readme-images/app-gradle.png)
 
 ```
-implementation("io.approov:service.httpsurlconn:3.5.1")
+implementation("io.approov:service.httpsurlconn:3.5.3")
 ```
 
 Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
