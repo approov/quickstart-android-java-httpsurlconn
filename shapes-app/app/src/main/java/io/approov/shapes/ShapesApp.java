@@ -22,6 +22,9 @@ import android.app.Application;
 // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
 //import io.approov.service.httpsurlconn.ApproovService;
 
+// *** UNCOMMENT THE LINE BELOW FOR APPROOV WITH INSTALLATION MESSAGE SIGNING ***
+//import io.approov.service.httpsurlconn.ApproovDefaultMessageSigning;
+
 
 public class ShapesApp extends Application {
     @Override
@@ -29,6 +32,13 @@ public class ShapesApp extends Application {
         super.onCreate();
 
         // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-        //ApproovService.initialize(getApplicationContext(), "<enter-your-config-string-here>");
+        //ApproovService.initialize(getApplicationContext(), "#199896#cjjyY5WNuuhkdzTDYV49eGZfXOYbnQrL16nzxoYqWbc=");
+
+        // *** UNCOMMENT THE LINES BELOW FOR APPROOV WITH INSTALLATION MESSAGE SIGNING ***
+//        ApproovService.setServiceMutator(
+//                new ApproovDefaultMessageSigning()
+//                        .setDefaultFactory(ApproovDefaultMessageSigning.generateDefaultSignatureParametersFactory())
+//        );
+
     }
 }
