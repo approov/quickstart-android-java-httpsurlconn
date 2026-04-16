@@ -1,2 +1,4 @@
-include ':approov-sdk'
+//include ':approov-sdk'
 include ':app'
+include ':approov-service'
+project(':approov-service').projectDir = new File('/Users/charlesoj/Developer/Quickstarts/approov-service-httpsurlconn/approov-service')
