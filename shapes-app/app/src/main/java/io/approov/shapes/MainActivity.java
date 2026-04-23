@@ -35,14 +35,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
 // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-//import io.approov.service.httpsurlconn.ApproovService;
+import io.approov.service.httpsurlconn.ApproovService;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int MESSAGE_SIGNING_BATCH_SIZE = 100;
     private Activity activity;
     private View statusView = null;
     private ImageView statusImageView = null;
@@ -115,6 +118,168 @@ public class MainActivity extends Activity {
         return R.drawable.confused;
     }
 
+    private String readResponseBody(HttpsURLConnection connection) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        InputStream is = null;
+        try {
+            try {
+                is = new BufferedInputStream(connection.getInputStream());
+            } catch (IOException e) {
+                InputStream errorStream = connection.getErrorStream();
+                if (errorStream == null)
+                    throw e;
+                is = new BufferedInputStream(errorStream);
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String inputLine;
+            while ((inputLine = br.readLine()) != null)
+                sb.append(inputLine);
+            return sb.toString();
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                }
+                catch (IOException e) {
+                    Log.d(TAG, "Error closing Shapes response InputStream");
+                }
+            }
+        }
+    }
+
+    private static final class BatchResult {
+        int validAccepted;
+        int validRejected;
+        int tamperedAccepted;
+        int tamperedRejected;
+        int networkErrors;
+        int unexpectedResponses;
+    }
+
+    private String mutateSignatureHeader(String signatureHeader) {
+        if (signatureHeader == null)
+            return null;
+
+        int firstColon = signatureHeader.indexOf(':');
+        int lastColon = signatureHeader.lastIndexOf(':');
+        if ((firstColon < 0) || (lastColon <= firstColon + 1))
+            return signatureHeader + "A";
+
+        char[] chars = signatureHeader.toCharArray();
+        for (int i = firstColon + 1; i < lastColon; i++) {
+            char c = chars[i];
+            if (Character.isLetterOrDigit(c)) {
+                chars[i] = (c == 'A') ? 'B' : 'A';
+                return new String(chars);
+            }
+        }
+        chars[firstColon + 1] = (chars[firstColon + 1] == 'A') ? 'B' : 'A';
+        return new String(chars);
+    }
+
+    private boolean isAcceptedResponse(int responseCode, String responseBody) {
+        return (responseCode >= 200) && (responseCode < 300)
+                && (responseBody != null)
+                && responseBody.contains("\"messageSigningResult\":\"VALID\"");
+    }
+
+    private boolean isRejectedResponse(int responseCode, String responseBody) {
+        return (responseCode >= 400)
+                || ((responseBody != null) && responseBody.contains("\"messageSigningResult\":\"INVALID\""))
+                || ((responseBody != null) && responseBody.contains("\"status\":\"FAIL\""));
+    }
+
+    private void runMessageSigningBatchTest() {
+        Log.d(TAG, "Starting installation message signing batch test with " + MESSAGE_SIGNING_BATCH_SIZE + " requests");
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                statusView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                BatchResult batchResult = new BatchResult();
+
+                for (int i = 0; i < MESSAGE_SIGNING_BATCH_SIZE; i++) {
+                    boolean tamperSignature = (i % 2) == 1;
+                    HttpsURLConnection connection = null;
+                    String responseBody = null;
+                    try {
+                        URL url = new URL(getResources().getString(R.string.shapes_url));
+                        connection = (HttpsURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setInstanceFollowRedirects(false);
+                        connection.addRequestProperty("Accept", "application/json");
+                        connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
+                        ApproovService.addApproov(connection);
+
+                        if (tamperSignature) {
+                            String signature = connection.getRequestProperty("Signature");
+                            connection.setRequestProperty("Signature", mutateSignatureHeader(signature));
+                        }
+
+                        connection.connect();
+                        int responseCode = connection.getResponseCode();
+                        responseBody = readResponseBody(connection);
+
+                        if (!tamperSignature) {
+                            if (isAcceptedResponse(responseCode, responseBody))
+                                batchResult.validAccepted++;
+                            else if (isRejectedResponse(responseCode, responseBody))
+                                batchResult.validRejected++;
+                            else
+                                batchResult.unexpectedResponses++;
+                        } else {
+                            if (isRejectedResponse(responseCode, responseBody))
+                                batchResult.tamperedRejected++;
+                            else if (isAcceptedResponse(responseCode, responseBody))
+                                batchResult.tamperedAccepted++;
+                            else
+                                batchResult.unexpectedResponses++;
+                        }
+
+                        Log.d(TAG, "Batch request " + (i + 1) + "/" + MESSAGE_SIGNING_BATCH_SIZE
+                                + " tampered=" + tamperSignature
+                                + " code=" + responseCode
+                                + " body=" + responseBody);
+                    } catch (Exception e) {
+                        batchResult.networkErrors++;
+                        Log.e(TAG, "Batch request " + (i + 1) + "/" + MESSAGE_SIGNING_BATCH_SIZE
+                                + " tampered=" + tamperSignature + " failed", e);
+                    } finally {
+                        if (connection != null)
+                            connection.disconnect();
+                    }
+                }
+
+                final String summary = String.format(
+                        Locale.US,
+                        "Batch test complete (%d requests)\nvalid accepted: %d\nvalid rejected: %d\ntampered accepted: %d\ntampered rejected: %d\nnetwork errors: %d\nunexpected: %d",
+                        MESSAGE_SIGNING_BATCH_SIZE,
+                        batchResult.validAccepted,
+                        batchResult.validRejected,
+                        batchResult.tamperedAccepted,
+                        batchResult.tamperedRejected,
+                        batchResult.networkErrors,
+                        batchResult.unexpectedResponses
+                );
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusImageView.setVisibility(View.GONE);
+                        statusTextView.setText(summary);
+                        statusView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,62 +350,7 @@ public class MainActivity extends Activity {
         shapesCheckButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            // hide status
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    statusView.setVisibility(View.INVISIBLE);
-                }
-            });
-
-            // run our HTTP request in a background thread to avoid blocking the UI thread
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // fetch from the endpoint
-                    int imgId = R.drawable.confused;
-                    String msg;
-                    HttpsURLConnection connection = null;
-                    try {
-                        URL url = new URL(getResources().getString(R.string.shapes_url));
-                        connection = (HttpsURLConnection) url.openConnection();
-                        connection.setRequestMethod("GET");
-                        // Keep the originally signed request target unchanged (redirects can invalidate signatures).
-                        connection.setInstanceFollowRedirects(false);
-                        connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
-
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRETS PROTECTION ***
-                        //ApproovService.addSubstitutionHeader("Api-Key", null);
-
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-                        //ApproovService.addApproov(connection);
-
-                        connection.connect();
-
-                        msg = "Http status code " + connection.getResponseCode();
-                        if (connection.getResponseCode() == 200)
-                            imgId = readShapesResponse(connection);
-                    } catch (IOException e) {
-                        Log.d(TAG, "Shapes call failed: " + e.toString());
-                        msg = "Shapes call failed: " + e.toString();
-                    }
-                    if (connection != null)
-                        connection.disconnect();
-
-                    // display the result
-                    final int finalImgId = imgId;
-                    final String finalMsg = msg;
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            statusImageView.setImageResource(finalImgId);
-                            statusTextView.setText(finalMsg);
-                            statusView.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                }
-            });
+            runMessageSigningBatchTest();
         }
     });
     }
