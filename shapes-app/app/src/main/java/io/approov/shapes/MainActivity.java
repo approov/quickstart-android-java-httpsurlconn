@@ -205,6 +205,8 @@ public class MainActivity extends Activity {
                         URL url = new URL(getResources().getString(R.string.shapes_url));
                         connection = (HttpsURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
+                        // Keep the originally signed request target unchanged (redirects can invalidate signatures).
+                        connection.setInstanceFollowRedirects(false);
                         connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
 
                         // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRETS PROTECTION ***
@@ -214,6 +216,7 @@ public class MainActivity extends Activity {
                         //ApproovService.addApproov(connection);
 
                         connection.connect();
+
                         msg = "Http status code " + connection.getResponseCode();
                         if (connection.getResponseCode() == 200)
                             imgId = readShapesResponse(connection);
