@@ -32,7 +32,8 @@ public class ShapesApp extends Application {
         super.onCreate();
 
         // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-        //ApproovService.initialize(getApplicationContext(), "#199896#cjjyY5WNuuhkdzTDYV49eGZfXOYbnQrL16nzxoYqWbc=");
+        // Replace YOUR_APPROOV_CONFIG_HERE with your own local, non-checked-in Approov config.
+        //ApproovService.initialize(getApplicationContext(), "YOUR_APPROOV_CONFIG_HERE");
 
         // *** UNCOMMENT THE LINES BELOW FOR APPROOV WITH INSTALLATION MESSAGE SIGNING ***
 //        ApproovService.setServiceMutator(
