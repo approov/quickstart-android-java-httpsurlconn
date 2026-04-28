@@ -54,9 +54,9 @@ In some cases it might not be possible to automatically substitute a secret in a
 In this case it is possible to make an explicit call at runtime to obtain the secret value, for apps passing attestation. Here is an example for using the required method in `ApproovService`:
 
 ```Java
-import io.approov.service.okhttp.ApproovException;
-import io.approov.service.okhttp.ApproovNetworkException;
-import io.approov.service.okhttp.ApproovRejectionException;
+import io.approov.service.httpsurlconn.ApproovException;
+import io.approov.service.httpsurlconn.ApproovNetworkException;
+import io.approov.service.httpsurlconn.ApproovRejectionException;
 
 ...
 
