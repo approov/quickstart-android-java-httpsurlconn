@@ -26,7 +26,7 @@ The following app permissions need to be available in the manifest to use Approo
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-Note that the minimum SDK version you can use with the Approov package is 21 (Android 5.0). 
+Note that the minimum SDK version you can use with the Approov package is 23 (Android 6.0). 
 
 Please [read this](https://approov.io/docs/latest/approov-usage-documentation/#targeting-android-11-and-above) section of the reference documentation if targeting Android 11 (API level 30) or above.
 
@@ -51,8 +51,10 @@ The `<enter-your-config-string-here>` is a custom string that configures your Ap
 You can then make Approov enabled `HttpsUrlConnection` API calls using the following call on any `HttpsUrlConnection` connection, just before the connection is made:
 
 ```Java
-ApproovService.addApproov(connection);
+connection = ApproovService.addApproov(connection);
 ```
+
+Always continue to use the returned `connection` instance afterwards, because the service layer may wrap the original connection when it needs to apply additional request mutations such as URL rewriting.
 
 > **NOTE:** It is important that this call is made just prior to the connection being made and thus within any retry loop, to ensure that an updated Approov token is always made available on the connection request.
 

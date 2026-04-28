@@ -62,7 +62,7 @@ Tokens for this domain will be automatically signed with the specific secret for
 
 ## MODIFY THE APP TO USE APPROOV
 
-Uncomment the three lines of Approov initialization code in `io/approov/shapes/ShapesApp.java`:
+Uncomment the Approov initialization code in `io/approov/shapes/ShapesApp.java`:
 
 ![Approov Initialization](readme-images/approov-init-code.png)
 
@@ -74,9 +74,11 @@ Next we need to use Approov when we make request for the shapes. Change the mark
 
 Note you will also need to uncomment the `ApproovService` import near the start of the file.
 
-We pass the `HttpsUrlConnection` to the `ApproovService.addApproov` method and this automatically fetches an Approov token and adds it as a header to the request. It also pins the connection to the endpoint to ensure that no Man-in-the-Middle can eavesdrop on any communication being made.
+We pass the `HttpsUrlConnection` to the `ApproovService.addApproov` method and continue with the returned `HttpsURLConnection`. This automatically fetches an Approov token and adds it as a header to the request. It also pins the connection to the endpoint to ensure that no Man-in-the-Middle can eavesdrop on any communication being made.
 
-Note that this method may throw an `ApproovException` (derived from `IOException`) if it is unable to fetch an Approov token due to no or poor Internet connectivity then `ApproovNetworkException` is thrown. In this case the user should be able to initiate a retry. Therefore the call should be in a`try-catch` block, possibly the same one as [`connect`](https://developer.android.com/reference/java/net/URLConnection.html#connect()) or reads of the body for a `GET`.
+Note that this method may return a wrapped connection when it needs to apply additional request mutations, such as URL rewriting. For that reason you should always keep using the returned `connection` reference afterwards.
+
+Note that this method may throw an `ApproovException` (derived from `IOException`) if it is unable to fetch an Approov token due to no or poor Internet connectivity then `ApproovNetworkException` is thrown. In this case the user should be able to initiate a retry. Therefore the call should be in a `try-catch` block, possibly the same one as [`connect`](https://developer.android.com/reference/java/net/URLConnection.html#connect()) or reads of the body for a `GET`.
 
 You should also edit the `res/values/strings.xml` file to change to using the shapes `https://shapes.approov.io/v3/shapes/` endpoint that checks Approov tokens (as well as the API key built into the app):
 
@@ -115,6 +117,29 @@ If you still don't get a valid shape then there are some things you can try. Rem
 * Use `approov metrics` to see [Live Metrics](https://approov.io/docs/latest/approov-usage-documentation/#metrics-graphs) of the cause of failure.
 * You can use a debugger or emulator and get valid Approov tokens on a specific device by ensuring you are [forcing a device ID to pass](https://approov.io/docs/latest/approov-usage-documentation/#forcing-a-device-id-to-pass). As a shortcut, you can use the `latest` as discussed so that the `device ID` doesn't need to be extracted from the logs or an Approov token.
 * Also, you can use a debugger or Android emulator and get valid Approov tokens on any device if you [mark the signing certificate as being for development](https://approov.io/docs/latest/approov-usage-documentation/#development-app-signing-certificates).
+
+## SHAPES APP WITH INSTALLATION MESSAGE SIGNING
+
+This section shows how to add message signing as an additional layer of protection in addition to an Approov token.
+
+1. Edit the `res/values/strings.xml` file to use the shapes `https://shapes.approov.io/v5/shapes/` endpoint. The v5 endpoint performs a message signature check in addition to the Approov token check.
+
+2. Uncomment the message signing setup code in `io/approov/shapes/ShapesApp.java`. This installs an `ApproovService` mutator that adds the message signature to the request automatically.
+
+3. Configure Approov to add the public message signing key to the Approov token. This key is used by the v5 endpoint to perform its message signature check.
+
+```
+approov policy -setInstallPubKey on
+```
+
+4. Build and run the app again and press the `Get Shape` button. You should see this (or another shape):
+
+<p>
+    <img src="readme-images/shapes-good.png" width="256" title="Shapes Good">
+</p>
+
+This indicates that in addition to the app obtaining a validly signed Approov token, the message also has a valid signature.
+
 ## SHAPES APP WITH SECRETS PROTECTION
 
 This section provides an illustration of an alternative option for Approov protection if you are not able to modify the backend to add an Approov Token check. Firstly, revert any previous change to `res/values/strings.xml` to using `https://shapes.approov.io/v1/shapes/` that simply checks for an API key. The `shapes_api_key` should also be changed to `shapes_api_key_placeholder`, removing the actual API key out of the code:

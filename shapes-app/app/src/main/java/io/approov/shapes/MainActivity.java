@@ -128,8 +128,8 @@ public class MainActivity extends Activity {
         helloCheckButton = findViewById(R.id.btnConnectionCheck);
         shapesCheckButton = findViewById(R.id.btnShapesCheck);
 
-       // handle hello connection check
-       helloCheckButton.setOnClickListener(new View.OnClickListener() {
+        // handle hello connection check
+        helloCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // hide status
@@ -183,62 +183,61 @@ public class MainActivity extends Activity {
 
         // handle getting shapes
         shapesCheckButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            // hide status
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    statusView.setVisibility(View.INVISIBLE);
-                }
-            });
-
-            // run our HTTP request in a background thread to avoid blocking the UI thread
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // fetch from the endpoint
-                    int imgId = R.drawable.confused;
-                    String msg;
-                    HttpsURLConnection connection = null;
-                    try {
-                        URL url = new URL(getResources().getString(R.string.shapes_url));
-                        connection = (HttpsURLConnection) url.openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
-
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRETS PROTECTION ***
-                        //ApproovService.addSubstitutionHeader("Api-Key", null);
-
-                        // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
-                        //ApproovService.addApproov(connection);
-
-                        connection.connect();
-                        msg = "Http status code " + connection.getResponseCode();
-                        if (connection.getResponseCode() == 200)
-                            imgId = readShapesResponse(connection);
-                    } catch (IOException e) {
-                        Log.d(TAG, "Shapes call failed: " + e.toString());
-                        msg = "Shapes call failed: " + e.toString();
+            @Override
+            public void onClick(View view) {
+                // hide status
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusView.setVisibility(View.INVISIBLE);
                     }
-                    if (connection != null)
-                        connection.disconnect();
+                });
 
-                    // display the result
-                    final int finalImgId = imgId;
-                    final String finalMsg = msg;
-                    activity.runOnUiThread(new Runnable() {
+                // run our HTTP request in a background thread to avoid blocking the UI thread
+                AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            statusImageView.setImageResource(finalImgId);
-                            statusTextView.setText(finalMsg);
-                            statusView.setVisibility(View.VISIBLE);
-                        }
-                    });
+                            // fetch from the endpoint
+                            int imgId = R.drawable.confused;
+                            String msg;
+                            HttpsURLConnection connection = null;
+                            try {
+                                URL url = new URL(getResources().getString(R.string.shapes_url));
+                                connection = (HttpsURLConnection) url.openConnection();
+                                connection.setRequestMethod("GET");
+                                connection.addRequestProperty("Api-Key", getResources().getString(R.string.shapes_api_key));
 
-                }
-            });
-        }
-    });
+                                // *** UNCOMMENT THE LINE BELOW FOR APPROOV USING SECRETS PROTECTION ***
+                                //ApproovService.addSubstitutionHeader("Api-Key", null);
+
+                                // *** UNCOMMENT THE LINE BELOW FOR APPROOV ***
+                                //connection = ApproovService.addApproov(connection);
+
+                                connection.connect();
+                                msg = "Http status code " + connection.getResponseCode();
+                                if (connection.getResponseCode() == 200)
+                                    imgId = readShapesResponse(connection);
+                            } catch (IOException e) {
+                                Log.d(TAG, "Shapes call failed: " + e.toString());
+                                msg = "Shapes call failed: " + e.toString();
+                            }
+                            if (connection != null)
+                                connection.disconnect();
+
+                            // display the result
+                            final int finalImgId = imgId;
+                            final String finalMsg = msg;
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusImageView.setImageResource(finalImgId);
+                                    statusTextView.setText(finalMsg);
+                                    statusView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                });
+            }
+        });
     }
 }

@@ -26,8 +26,10 @@ It is possible to pass an empty `config` string to indicate that no initializati
 Adds Approov to the given `connection`. The Approov token is added in a header and this also overrides the HostnameVerifier with something that pins the connections. If a binding header has been specified then its hash will be set if it is present. This function may also substitute header values to hold secure string secrets. If it is not possible to fetch an Approov token due to networking issues, or header substitution fails due to attestation rejection, then `ApproovException` is thrown.
     
 ```Java
-void addApproov(HttpsURLConnection connection) throws ApproovException
+HttpsURLConnection addApproov(HttpsURLConnection connection) throws ApproovException
 ```
+
+The returned `HttpsURLConnection` should always be used for subsequent calls such as `connect()`, reading the response body, and `disconnect()`. In many cases this will be the same instance that was passed in, but a wrapped connection may be returned when additional request mutation is required.
 
 ## SetProceedOnNetworkFail
 If the provided `proceed` value is `true` then this indicates that the networking should proceed anyway if it is not possible to obtain an Approov token due to a networking failure. If this is called then the backend API can receive calls without the expected Approov token header being added, or without header/query parameter substitutions being made. This should only ever be used if there is some particular reason, perhaps due to local network conditions, that you believe that traffic to the Approov cloud service will be particularly problematic.
