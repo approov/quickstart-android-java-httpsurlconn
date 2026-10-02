@@ -16,3 +16,9 @@
 #   public *;
 #}
 -keep class com.criticalblue.approovsdk.** {*;}
+
+# The Approov SDK refers to optional Google Play services and Play Integrity classes that
+# are not present unless the app includes those libraries. Android Gradle plugin 8 treats
+# missing classes as an error in R8.
+-dontwarn com.google.android.gms.tasks.**
+-dontwarn com.google.android.play.core.integrity.**

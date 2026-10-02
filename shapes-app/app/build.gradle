@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    namespace "io.approov.shapes"
+    compileSdkVersion 35
     defaultConfig {
         applicationId "io.approov.shapes"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion 23
+        targetSdkVersion 34
         versionCode  3
         versionName "3.0"
     }
@@ -27,11 +28,14 @@ android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
+            // Required by io.approov:service.httpsurlconn 3.5.4 and later
+            coreLibraryDesugaringEnabled true
         }
     }
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.4.1'
 }

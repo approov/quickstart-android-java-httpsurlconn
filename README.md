@@ -11,7 +11,33 @@ The Approov integration is available via [`maven`](https://mvnrepository.com/rep
 The `Maven` repository is already present in the gradle.build file so the only import you need to make is the actual service layer itself:
 
 ```
-implementation("io.approov:service.httpsurlconn:3.5.3")
+implementation("io.approov:service.httpsurlconn:3.5.4")
+```
+
+The service layer requires [core library desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) and a minimum SDK version of 23. Add the following to the app-level `build.gradle` file:
+
+```
+android {
+    defaultConfig {
+        minSdkVersion 23
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+}
+```
+
+Use Android Gradle plugin 8.x or later. With Android Gradle plugin 7.x, the build fails in D8 with a `NullPointerException` while it processes the service layer. With Android Gradle plugin 8.x and no desugaring, the build fails with `Dependency 'io.approov:service.httpsurlconn:3.5.4' requires core library desugaring to be enabled`.
+
+If your release build uses R8 (`minifyEnabled true`), add these rules to your ProGuard rules file. The Approov SDK refers to optional Google Play services and Play Integrity classes, and Android Gradle plugin 8 stops the build with `Missing class` errors if they are not present:
+
+```
+-dontwarn com.google.android.gms.tasks.**
+-dontwarn com.google.android.play.core.integrity.**
 ```
 
 Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
@@ -26,7 +52,7 @@ The following app permissions need to be available in the manifest to use Approo
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-Note that the minimum SDK version you can use with the Approov package is 21 (Android 5.0). 
+Note that the minimum SDK version you can use with the Approov package is 23 (Android 6.0). 
 
 Please [read this](https://approov.io/docs/latest/approov-usage-documentation/#targeting-android-11-and-above) section of the reference documentation if targeting Android 11 (API level 30) or above.
 

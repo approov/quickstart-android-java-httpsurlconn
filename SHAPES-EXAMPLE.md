@@ -5,7 +5,7 @@ This quickstart is written specifically for native Android apps that are written
 ## WHAT YOU WILL NEED
 * Access to a trial or paid Approov account
 * The `approov` command line tool [installed](https://approov.io/docs/latest/approov-installation/) with access to your account
-* [Android Studio](https://developer.android.com/studio) installed (Android Studio Bumblebee 2021.1.1 is used in this guide)
+* [Android Studio](https://developer.android.com/studio) installed, in a version that supports Android Gradle plugin 8.9 (see the [compatibility table](https://developer.android.com/build/releases/gradle-plugin#android_gradle_plugin_and_android_studio_compatibility)). The Shapes app uses Android Gradle plugin 8.9.0 and Gradle 8.11.1, which require JDK 17.
 * The contents of this repo
 
 ## RUNNING THE SHAPES APP WITHOUT APPROOV
@@ -45,8 +45,10 @@ The `approov-service-httpsurlconn` dependency needs to be added as follows to th
 ![App Build Gradle](readme-images/app-gradle.png)
 
 ```
-implementation("io.approov:service.httpsurlconn:3.5.3")
+implementation("io.approov:service.httpsurlconn:3.5.4")
 ```
+
+The service layer requires [core library desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) and a minimum SDK version of 23. The Shapes app already sets `minSdkVersion 23`, `coreLibraryDesugaringEnabled true` and the `coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'` dependency in `app/build.gradle`, so no other change is necessary. If you add Approov to your own app, see [ADDING APPROOV SERVICE DEPENDENCY](README.md#adding-approov-service-dependency).
 
 Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
 
