@@ -38,7 +38,7 @@ The subsequent steps of this guide show you how to provide better protection, ei
 
 ## ADD THE APPROOV DEPENDENCY
 
-The Approov integration is available via [`maven`](https://mvnrepository.com/repos/central). This allows inclusion into the project by simply specifying a dependency in the `gradle` files for the app. The `Maven` repository is already present in the gradle.build file so the only import you need to make is the actual service layer itself.
+The Approov integration is available via [`maven`](https://mvnrepository.com/repos/central). This allows inclusion into the project by simply specifying a dependency in the `gradle` files for the app. The `mavenCentral()` repository is already present in the project-level `build.gradle` file, so the only import you need to make is the actual service layer itself.
 
 The `approov-service-httpsurlconn` dependency needs to be added as follows to the `app/build.gradle` at the app level:
 
@@ -50,7 +50,7 @@ implementation("io.approov:service.httpsurlconn:3.5.4")
 
 The service layer requires [core library desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) and a minimum SDK version of 23. The Shapes app already sets `minSdkVersion 23`, `coreLibraryDesugaringEnabled true` and the `coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'` dependency in `app/build.gradle`, so no other change is necessary. If you add Approov to your own app, see [ADDING APPROOV SERVICE DEPENDENCY](README.md#adding-approov-service-dependency).
 
-Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the modified `.gradle` file) after making these changes.
+Make sure you do a Gradle sync (by selecting `Sync Now` in the banner at the top of the app-level `build.gradle` file) after making these changes.
 
 Note that `approov-service-httpsurlconn` is actually an open source wrapper layer that allows you to easily use Approov with `HttpsUrlConnection`. This has a further dependency to the closed source Approov SDK itself.
 
